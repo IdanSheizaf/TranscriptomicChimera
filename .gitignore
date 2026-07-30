@@ -1,0 +1,13 @@
+# R & RStudio files
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Large raw output data / temporary files
+*.tmp
+*.csv.gz
