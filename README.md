@@ -30,7 +30,7 @@ This study deciphers the conserved gene expression programs orchestrating this b
 ## 📂 Repository Structure & Manuscript Figure Mapping
 
 ```
-github_repo/
+TranscriptomicChimera/
 ├── transcriptome assembly/     # De novo assembly, filtering, & decontamination
 │   ├── 01_fastq.sh             # FastQC quality assessment
 │   ├── 02_trim_fastp.sh        # Adapter & quality trimming (fastp / Trimmomatic)
