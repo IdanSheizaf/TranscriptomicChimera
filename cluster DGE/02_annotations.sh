@@ -1,12 +1,13 @@
+###specific for SLURM managers, environment is user-specific and related to CLUSTER envirnment.
 #!/bin/bash
 #SBATCH --job-name=full_protein_annotations
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=64G  
 #SBATCH --time=12:00:00
-#SBATCH --output=logs/03_full.out
-#SBATCH --error=logs/03_full.err
+#SBATCH --output=/path/to/log.out
+#SBATCH --error=/path/to/error.err
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
+#SBATCH --mail-user=user@email.com
 
 set -e
 INPUT_DIR=$1
@@ -15,7 +16,7 @@ OUTPUT_DIR=${INPUT_DIR}/annotations
 
 [[ ! -f $PROTEOME_FASTA ]] && { echo "ERROR: $PROTEOME_FASTA missing"; exit 1; }
 
-# Environment (your setup)
+# Environment
 . /etc/profile.d/huji-lmod.sh
 module load spack miniconda3 
 source /usr/local/spack/opt/spack/linux-debian12-x86_64/gcc-12.2.0/miniconda3-24.3.0-iqeknetqo7ngpr57d6gmu3dg4rzlcgk6/etc/profile.d/conda.sh
