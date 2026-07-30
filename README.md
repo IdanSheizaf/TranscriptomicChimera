@@ -6,7 +6,7 @@ This repository contains the complete computational workflow, bioinformatic asse
 
 ## 📌 Conceptual Abstract
 
-Terrestrial isopods (Oniscidea) undergo a unique **biphasic moult cycle**, where exuviation occurs in two distinct, staggered stages separated by an interval known as the **intramoult**:
+Isopods undergo a unique **biphasic moult cycle**, where exuviation occurs in two distinct, staggered stages separated by an interval known as the **intramoult**:
 1. **Posterior Ecdysis**: Shedding of the posterior cuticle (hind legs and abdomen).
 2. **Intramoult Interval**: A functional interval where the anterior and posterior regions reside in different physiological states.
 3. **Anterior Ecdysis**: Shedding of the anterior cuticle (front legs, head, and thorax).
