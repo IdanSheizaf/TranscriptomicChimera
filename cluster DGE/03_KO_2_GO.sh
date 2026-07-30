@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=ko_to_go
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/ko_to_go_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/ko_to_go_%j.err
+#SBATCH --output=/path/to/log_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --time=06:00:00
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=4
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
+#SBATCH --mail-user=user@email.com
 
 # ============================================================================
 # Enrich combined_annotations.tsv with GO terms from KEGG KO
@@ -32,8 +32,8 @@ fi
 # CONFIGURATION
 # ============================================================================
 
-SCRIPT_DIR="/sci/labs/ariel.chipman/idansh/scripts/rnaseq"
-INPUT_FILE="$1/transcriptome/combined_annotations.tsv"
+SCRIPT_DIR="/path/to/script/dir"
+INPUT_FILE="$1/path/to/combined_annotations.tsv" 
 OUTPUT_FILE="${INPUT_FILE%.tsv}_with_GO_from_KO.tsv"
 PROGRESS_FILE="${INPUT_FILE%.tsv}_ko2go_progress.txt"
 
