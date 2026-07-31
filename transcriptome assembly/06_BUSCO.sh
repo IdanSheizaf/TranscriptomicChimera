@@ -1,9 +1,10 @@
+### Everything until USER SETTINGS is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=BUSCO
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@mail.huji.ac.il
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/BUSCO_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/BUSCO_%j.err
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=5G
@@ -16,7 +17,7 @@ source /usr/local/spack/opt/spack/linux-debian12-x86_64/gcc-12.2.0/miniconda3-24
 conda activate busco
 # ==== USER SETTINGS ====
 LINEAGE=crustacea_odb12
-LINEAGE_PATH=/sci/labs/ariel.chipman/idansh/.config/busco/
+LINEAGE_PATH="${2:-/path/to/busco_downloads}"
 
 # ==== Get folder from argument ====
 FULL_FOLDER_PATH="$1"

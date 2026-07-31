@@ -1,12 +1,13 @@
+### Everything until Environment Setup is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=bowtie_BAM
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=32G
 #SBATCH --time=12:00:00
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/bowtie_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/bowtie_%j.err
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
 
 # --- 1. Environment Setup (Requires bowtie2, samtools) ---
 . /etc/profile.d/huji-lmod.sh

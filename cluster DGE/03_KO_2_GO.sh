@@ -1,17 +1,18 @@
+### Everything until CONFIGURATION is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=ko_to_go
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/ko_to_go_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/ko_to_go_%j.err
-#SBATCH --time=06:00:00
-#SBATCH --mem=16G
 #SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=06:00:00
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
 
 # ============================================================================
 # Enrich combined_annotations.tsv with GO terms from KEGG KO
 # ============================================================================
-# Usage: sbatch enrich_annotations.slurm /path/to/project/folder
+# Usage: sbatch 03_KO_2_GO.sh /path/to/project/folder [script_dir]
 # ============================================================================
 
 # 1. Environment Setup
@@ -22,9 +23,9 @@ conda activate base
 
 set -e
 
-if [ $# -ne 1 ]; then
+if [ $# -lt 1 ]; then
     echo "Error: Project folder required"
-    echo "Usage: sbatch enrich_annotations.slurm /path/to/project/folder"
+    echo "Usage: sbatch 03_KO_2_GO.sh /path/to/project/folder [script_dir]"
     exit 1
 fi
 
@@ -32,7 +33,7 @@ fi
 # CONFIGURATION
 # ============================================================================
 
-SCRIPT_DIR="/sci/labs/ariel.chipman/idansh/scripts/rnaseq"
+SCRIPT_DIR="${2:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 INPUT_FILE="$1/transcriptome/combined_annotations.tsv"
 OUTPUT_FILE="${INPUT_FILE%.tsv}_with_GO_from_KO.tsv"
 PROGRESS_FILE="${INPUT_FILE%.tsv}_ko2go_progress.txt"

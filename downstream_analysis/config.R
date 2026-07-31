@@ -2,8 +2,18 @@
 # Change these settings here to update the entire pipeline.
 
 # --- PROJECT SETTINGS ---
-# Set the absolute path to your project root
-PROJECT_ROOT <- "G:/My Drive/PhD/Projects/Comparative Expressional Changes During the Moult Cycle in Land Isopods"
+# Set the project root directory dynamically (from environment variable, current working directory, or relative parent)
+default_root <- Sys.getenv("PROJECT_ROOT", unset = "")
+if (default_root == "" || !dir.exists(default_root)) {
+  default_root <- getwd()
+  if (basename(default_root) == "downstream_analysis") {
+    PROJECT_ROOT <- dirname(default_root)
+  } else {
+    PROJECT_ROOT <- default_root
+  }
+} else {
+  PROJECT_ROOT <- default_root
+}
 
 # --- ACTIVE ANALYSIS ---
 # Current species under investigation: "maculatum", "laevis", or "officinalis"

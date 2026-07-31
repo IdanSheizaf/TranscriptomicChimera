@@ -1,11 +1,12 @@
+### Everything until ENVIRONMENT is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=mmseqs_decontam
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=200G
 #SBATCH --time=24:00:00
-#SBATCH --mail-user=idan.slurm@gmail.com
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/mmseqs_decontam_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/mmseqs_decontam_%j.err
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --mail-type=FAIL,BEGIN,END
 
 set -euo pipefail
@@ -51,7 +52,7 @@ if [[ ${#REF_FASTA_FILE[@]} -eq 0 ]]; then
 fi
 FINAL_REF="${REF_FASTA_FILE[0]}"
 
-MMSEQ_DB_DIR="/sci/labs/ariel.chipman/idansh/mmseq_db"
+MMSEQ_DB_DIR="${2:-/path/to/mmseq_db}"
 TARGET_DB="${MMSEQ_DB_DIR}/uniref90"
 
 TMP_DIR="${INPUT_DIR}/mmseqs_tmp"
@@ -135,7 +136,8 @@ else
     conda deactivate
     conda activate tax_env
 
-    /sci/labs/ariel.chipman/idansh/scripts/transcriptome_assembly/add_taxids_from_names.py \
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    "$SCRIPT_DIR/add_taxids_from_names.py" \
         "$TAX_TSV" "$NAME_COL" "$TAX_TSV_WITH_IDS" "$NAME_TAXID_MAP"
 
     conda deactivate

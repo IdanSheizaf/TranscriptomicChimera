@@ -3,9 +3,11 @@
 # (ComBat-seq) VST counts to identify conserved co-expression modules.
 
 # === SETUP ===
-project_path <- "G:/My Drive/PhD/Projects/Comparative Expressional Changes During the Moult Cycle in Land Isopods/local_scripts"
-setwd(project_path)
-source("utils.R")
+if (file.exists("utils.R")) {
+  source("utils.R")
+} else if (file.exists(file.path("downstream_analysis", "utils.R"))) {
+  source(file.path("downstream_analysis", "utils.R"))
+}
 library(DESeq2)
 library(sva)
 library(ComplexHeatmap)

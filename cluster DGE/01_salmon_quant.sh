@@ -1,13 +1,14 @@
+### Everything until CONFIGURATION is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=01_salmon_quant
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=32G
 #SBATCH --time=06:00:00
-#SBATCH --mail-user=idan.slurm@gmail.com
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/salmon_quant_%A_%a.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/salmon_quant_%A_%a.err
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%A_%a.out
+#SBATCH --error=/path/to/error_%A_%a.err
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --array=1-49%10                # <-- CHANGE 50 to your number of samples
+#SBATCH --array=1-49%10                # <-- CHANGE 49 to your number of samples
 
 # Environment
 . /etc/profile.d/huji-lmod.sh

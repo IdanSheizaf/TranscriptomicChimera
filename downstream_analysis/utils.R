@@ -21,14 +21,27 @@ get_project_root <- function() {
 }
 
 #' Build a Path to a Species Data Directory
+#' Build a Path to a Species Data Directory
 get_data_path <- function(species = ACTIVE_SPECIES, sub_dir = NULL, filename = NULL) {
   root <- get_project_root()
-  path <- file.path(root, "local_scripts", "RNAseq", species)
   
+  # Candidate base directories
+  candidates <- c(
+    file.path(root, species),
+    file.path(root, "cluster DGE", species),
+    file.path(root, "local_scripts", "RNAseq", species),
+    file.path(root, "..", "cluster DGE", species)
+  )
+  
+  base_path <- candidates[dir.exists(candidates)][1]
+  if (is.na(base_path)) {
+    base_path <- file.path(root, species)
+  }
+  
+  path <- base_path
   if (!is.null(sub_dir)) {
     path <- file.path(path, sub_dir)
   }
-  
   if (!is.null(filename)) {
     path <- file.path(path, filename)
   }
@@ -50,10 +63,16 @@ get_data_path <- function(species = ACTIVE_SPECIES, sub_dir = NULL, filename = N
 load_annotations <- function(species = ACTIVE_SPECIES) {
   
   # 1. Load Master Crustacea OG file
-  # (Contains: gene_id, ODB_OG, COG_category, Preferred_name (descriptive), GOs_mf, etc.)
-  master_path <- file.path(get_project_root(), "local_scripts", "RNAseq", "de_novo_transcriptomes_crustacea.og.annotations")
-  if (!file.exists(master_path)) {
-    stop("Master Crustacea annotation file not found at: ", master_path)
+  root <- get_project_root()
+  master_candidates <- c(
+    file.path(root, "de_novo_transcriptomes_crustacea.og.annotations"),
+    file.path(root, "transcriptome assembly", "de_novo_transcriptomes_crustacea.og.annotations"),
+    file.path(root, "local_scripts", "RNAseq", "de_novo_transcriptomes_crustacea.og.annotations")
+  )
+  master_path <- master_candidates[file.exists(master_candidates)][1]
+  
+  if (is.na(master_path) || !file.exists(master_path)) {
+    stop("Master Crustacea annotation file not found in project root or subdirectories.")
   }
   
   cat("Loading Master Crustacea annotations...\n")

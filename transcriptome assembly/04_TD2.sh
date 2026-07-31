@@ -1,9 +1,10 @@
+### Everything until USER SETTINGS is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=TD2
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/TD2_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/TD2_%j.err
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --time=20:00:00
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=270G
@@ -16,7 +17,7 @@ conda activate TD2_env
 
 # ==== USER SETTINGS ====
 SAMPLE_DIR="$1"
-MMSEQS_DB_DIR="/sci/labs/ariel.chipman/idansh/mmseq_db"
+MMSEQS_DB_DIR="${2:-/path/to/mmseq_db}"
 
 # ==== Get folder from argument ====
 
@@ -66,4 +67,4 @@ TD2.Predict -t "$INPUT_FASTA" --retain-mmseqs-hits combined_hits.m8 > predict.lo
 rm "${OUTPUT_DIR}/combined_hits.m8"
 
 
-echo "Done with $$1."
+echo "Done with $1."

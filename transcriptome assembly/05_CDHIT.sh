@@ -1,13 +1,14 @@
+### Everything until Environment is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=CDHIT
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
 #SBATCH --time=10:00:00
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/CD-HIT_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/CD-HIT_%j.err
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
+#SBATCH --mail-user=user@email.com
 
 
 # ==== Load environment (customize as needed) ====
@@ -24,8 +25,8 @@ CDHIT_THREADS=8
 INPUT_DIR="$1" # The argument passed by submit_all.sh is $1
 
 if [[ -z "$INPUT_DIR" ]]; then
-    echo "No folder provided! Exiting."
-    exit 1
+  echo "No folder provided! Exiting."
+  exit 1
 fi
 
 # 1. Dynamically find the input CDS file using globbing
@@ -34,8 +35,8 @@ shopt -s nullglob
 CDS_FILES=("$INPUT_DIR"/TD2/*.cds)
 
 if [[ ${#CDS_FILES[@]} -eq 0 ]]; then
-    echo "CRITICAL ERROR: No final CDS file (*.transdecoder.cds) found in $INPUT_DIR. Check TD2 output."
-    exit 1
+  echo "CRITICAL ERROR: No final CDS file (*.transdecoder.cds) found in $INPUT_DIR. Check TD2 output."
+  exit 1
 fi
 
 # Assuming TD2 refinement was run on one Trinity assembly, there should only be one CDS file.

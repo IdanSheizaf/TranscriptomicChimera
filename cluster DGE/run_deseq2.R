@@ -1,6 +1,5 @@
-#!/usr/bin/env Rscript
-
-.libPaths("/sci/labs/ariel.chipman/idansh/R_packages")
+# Custom R packages path (uncomment if custom R packages directory is needed)
+# .libPaths("/path/to/R_packages")
 
 suppressPackageStartupMessages({
   library(tximport)
@@ -107,9 +106,10 @@ cat("\nUnique phases found:", paste(unique(as.character(samples$phase)), collaps
 cat("Unique tissues found:", paste(unique(as.character(samples$tissue)), collapse=", "), "\n")
 cat("================================\n\n")
 
-samples$path <- file.path(quant_dir,
-                          paste0(samples$sample, "_merged_trimmed"),
-                          "quant.sf")
+# Support both direct sample folder and legacy _merged_trimmed folder
+sample_paths_direct  <- file.path(quant_dir, samples$sample, "quant.sf")
+sample_paths_trimmed <- file.path(quant_dir, paste0(samples$sample, "_merged_trimmed"), "quant.sf")
+samples$path <- ifelse(file.exists(sample_paths_direct), sample_paths_direct, sample_paths_trimmed)
 
 files_exist <- file.exists(samples$path)
 n_found <- sum(files_exist)
@@ -182,10 +182,13 @@ cat("4. Running DESeq...\n")
 dds       <- DESeq(dds)
 dds_phase <- DESeq(dds_phase)
 
-# Create a version excluding h.legs for the new categories
-cat("  Creating dds_phase_no_hlegs (excluding h.legs)...\n")
-# Note: Ensure the tissue name is exactly 'h.legs' as per user request
-dds_phase_no_hlegs <- dds_phase[, colData(dds_phase)$tissue != "h.legs"]
+# Create a version excluding h.legs for the new categories (if h.legs tissue exists)
+cat("  Creating dds_phase_no_hlegs (excluding h.legs if present)...\n")
+if ("h.legs" %in% colData(dds_phase)$tissue) {
+  dds_phase_no_hlegs <- dds_phase[, colData(dds_phase)$tissue != "h.legs"]
+} else {
+  dds_phase_no_hlegs <- dds_phase
+}
 # Filter out genes that might now have zero counts or very low counts in this subset
 keep_no_hlegs <- rowSums(counts(dds_phase_no_hlegs)) >= 10
 dds_phase_no_hlegs <- dds_phase_no_hlegs[keep_no_hlegs,]

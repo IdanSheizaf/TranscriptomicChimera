@@ -1,10 +1,11 @@
+### Everything until USER SETTINGS is specific for HUJI CLUSTER environment
 #!/bin/bash
 #
 #SBATCH --job-name=BUSCO_decontam
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@mail.huji.ac.il
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/BUSCO_decontam_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/BUSCO_decontam_%j.err
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=10G
@@ -34,13 +35,13 @@ BASE_NAME=$(basename "$SAMPLE_DIR")
 
 if [[ -z "${SAMPLE_DIR:-}" ]]; then
   echo "No sample folder provided! Exiting."
-  echo "Usage: sbatch 09_BUSCO_after_decontam.sh /path/to/sample_folder"
+  echo "Usage: sbatch 09_BUSCO_after_decontam.sh /path/to/sample_folder [lineage_path]"
   exit 1
 fi
 
-# BUSCO lineage and offline DB path (same as your existing BUSCO script)
+# BUSCO lineage and offline DB path
 LINEAGE="crustacea_odb12"
-LINEAGE_PATH="/sci/labs/ariel.chipman/idansh/.config/busco"
+LINEAGE_PATH="${2:-/path/to/busco_downloads}"
 
 # Decontaminated transcriptome from step 8
 DECONTAM_DIR="${SAMPLE_DIR}/decontamination"

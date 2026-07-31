@@ -3,9 +3,11 @@
 # all three isopod species for multiple phase transitions.
 
 # === SETUP ===
-project_path <- "G:/My Drive/PhD/Projects/Comparative Expressional Changes During the Moult Cycle in Land Isopods/local_scripts"
-setwd(project_path)
-source("utils.R")
+if (file.exists("utils.R")) {
+  source("utils.R")
+} else if (file.exists(file.path("downstream_analysis", "utils.R"))) {
+  source(file.path("downstream_analysis", "utils.R"))
+}
 library(tidyverse)
 library(ggVennDiagram)
 library(patchwork)
@@ -50,7 +52,13 @@ get_sig_genes <- function(species, comparison) {
 
 # Load Master Mapping for ODB_OG to Preferred_name
 cat("\nLoading master OG mapping...\n")
-master_ann_path <- file.path(get_project_root(), "local_scripts", "RNAseq", "de_novo_transcriptomes_crustacea.og.annotations")
+root <- get_project_root()
+master_candidates <- c(
+  file.path(root, "de_novo_transcriptomes_crustacea.og.annotations"),
+  file.path(root, "transcriptome assembly", "de_novo_transcriptomes_crustacea.og.annotations"),
+  file.path(root, "local_scripts", "RNAseq", "de_novo_transcriptomes_crustacea.og.annotations")
+)
+master_ann_path <- master_candidates[file.exists(master_candidates)][1]
 master_mapping <- read.delim(master_ann_path, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE) %>%
   select(ODB_OG, Preferred_name) %>%
   filter(!is.na(ODB_OG) & ODB_OG != "" & ODB_OG != "-") %>%

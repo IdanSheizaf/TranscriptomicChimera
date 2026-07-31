@@ -1,3 +1,4 @@
+### Everything until Environment is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=fastqc_batch
 #SBATCH --nodes=1
@@ -5,10 +6,10 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=8G
 #SBATCH --time=06:00:00
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/FASTQC_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/FASTQC_%j.err
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
 
 # 1. Input: Path to directory containing fastq files
 INPUT_DIR="$1"

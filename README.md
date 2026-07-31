@@ -6,7 +6,7 @@ This repository contains the complete computational workflow, bioinformatic asse
 
 ## 📌 Conceptual Abstract
 
-Terrestrial isopods (Oniscidea) undergo a unique **biphasic moult cycle**, where exuviation occurs in two distinct, staggered stages separated by an interval known as the **intramoult**:
+Isopods undergo a unique **biphasic moult cycle**, where exuviation occurs in two distinct, staggered stages separated by an interval known as the **intramoult**:
 1. **Posterior Ecdysis**: Shedding of the posterior cuticle (hind legs and abdomen).
 2. **Intramoult Interval**: A functional interval where the anterior and posterior regions reside in different physiological states.
 3. **Anterior Ecdysis**: Shedding of the anterior cuticle (front legs, head, and thorax).
@@ -79,19 +79,21 @@ github_repo/
 ## 🛠️ Pipeline Details
 
 ### 1. Assembly & Decontamination (`transcriptome assembly/`)
-1. **Quality Trimming**: `02_trim_fastp.sh` cleans raw paired-end reads.
-2. **De Novo Assembly**: `03_trinity.sh` constructs species-specific reference transcriptomes.
-3. **Redundancy Reduction**: `05_CDHIT.sh` clusters isoforms at 98% nucleotide identity.
-4. **Decontamination**: `08_mmseqs_decontam_ID_removal.sh` filters out non-arthropod contaminant sequences using `MMseqs2` against UniProt/NCBI NT.
-5. **Quality Assessment**: Assembly integrity is verified before and after decontamination using `BUSCO` Arthropoda database (`06_BUSCO.sh`, `09_BUSCO_after_decontam.sh`).
+All assembly scripts are standardized SLURM wrappers that accept the target project folder as `$1`:
+1. **Quality Assessment & Trimming**: `01_fastq.sh` runs FastQC; `02_trim_fastp.sh` (or `02_trim_PE.sh`) cleans raw reads.
+2. **De Novo Assembly**: `03_trinity.sh` (or `03_trinity_SR.sh`) constructs species-specific reference transcriptomes.
+3. **Coding Prediction & Redundancy Reduction**: `04_TD2.sh` runs TransDecoder; `05_CDHIT.sh` clusters isoforms at 95% nucleotide identity.
+4. **Decontamination**: `08_mmseqs_decontam_ID_removal.sh` filters out non-arthropod contaminant sequences using `MMseqs2` against UniProt/NCBI taxonomy databases.
+5. **Quality Assessment**: Assembly integrity is verified before and after decontamination using `BUSCO` (`06_BUSCO.sh`, `09_BUSCO_after_decontam.sh`).
 
 ### 2. Quantification & Differential Expression (`cluster DGE/`)
-1. **Quantification**: `01_salmon_quant.sh` quantifies transcript abundances per sample using `Salmon`.
-2. **Annotation**: `02_annotations.sh` and `03_KO_2_GO.sh` map KEGG KO terms, Pfam domains, and Gene Ontology (GO) IDs.
+Standardized, parameterized pipeline scripts taking the project directory path as `$1`:
+1. **Indexing & Quantification**: `00_index.sh` builds the Salmon index; `01_salmon_quant.sh` quantifies sample abundances.
+2. **Functional Annotation & Enrichment**: `02_annotations.sh` and `03_KO_2_GO.sh` map EggNOG/KEGG KO terms, Pfam domains, and GO IDs.
 3. **DESeq2 Contrasts**: `04_dge.sh` executes `run_deseq2.R` on an HPC cluster to model expression across species, tissues, and moult phases.
 
 ### 3. Downstream Manuscript Visualizations (`downstream_analysis/`)
-- All scripts in `downstream_analysis/` load shared paths via `config.R` and hybrid annotation mappings via `utils.R`.
+- All scripts in `downstream_analysis/` automatically resolve `PROJECT_ROOT` via `config.R` and `utils.R` without hardcoded system paths.
 - Cross-species counts are batch-corrected using ComBat-seq and VST-transformed.
 
 ---
@@ -123,14 +125,21 @@ github_repo/
    cd TranscriptomicChimera
    ```
 
-2. **Configure Local Paths**:
-   Edit `downstream_analysis/config.R` to point to your local data directory:
-   ```r
-   PROJECT_ROOT <- "/path/to/your/project/root"
+2. **Run Cluster Pipeline (HPC / SLURM)**:
+   All SLURM scripts are standardized templates. Submit jobs by passing your target project directory as the first argument (`$1`):
+   ```bash
+   sbatch "cluster DGE/00_index.sh" /path/to/project/folder
+   sbatch "cluster DGE/01_salmon_quant.sh" /path/to/project/folder
+   sbatch "cluster DGE/04_dge.sh" /path/to/project/folder
    ```
+   *Optional:* Provide custom software container or database paths as a second argument (`$2`) if needed.
 
-3. **Run Figure Generation**:
-   Execute the desired figure script within R / RStudio:
+3. **Run Downstream Figure Generation**:
+   All R scripts dynamically detect the project root. You can optionally set the `PROJECT_ROOT` environment variable:
+   ```bash
+   export PROJECT_ROOT="/path/to/your/project/root"
+   ```
+   Then execute figure scripts within R / RStudio:
    ```r
    source("downstream_analysis/hlegs_vs_flegs_analysis.R")
    source("downstream_analysis/head_vs_flegs_analysis.R")

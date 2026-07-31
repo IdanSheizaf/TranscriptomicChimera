@@ -3,11 +3,11 @@
 # to create a single, unified PCA plot with full statistical validation.
 
 # === SETUP WORKING DIRECTORY ===
-project_path <- "G:/My Drive/PhD/Projects/Comparative Expressional Changes During the Moult Cycle in Land Isopods/local_scripts"
-setwd(project_path)
-
-# === LIBRARIES ===
-source("utils.R")
+if (file.exists("utils.R")) {
+  source("utils.R")
+} else if (file.exists(file.path("downstream_analysis", "utils.R"))) {
+  source(file.path("downstream_analysis", "utils.R"))
+}
 library(DESeq2)
 library(ggrepel)
 library(patchwork)

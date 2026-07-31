@@ -4,10 +4,12 @@
 # Now expanded to multiple contrasts (Front vs Back legs, Head vs Front legs).
 
 # === SETUP ===
-project_path <- "G:/My Drive/PhD/Projects/Comparative Expressional Changes During the Moult Cycle in Land Isopods/local_scripts"
-setwd(project_path)
-output_dir <- file.path(project_path, "output_csv")
-source("utils.R")
+if (file.exists("utils.R")) {
+  source("utils.R")
+} else if (file.exists(file.path("downstream_analysis", "utils.R"))) {
+  source(file.path("downstream_analysis", "utils.R"))
+}
+output_dir <- file.path("output_csv")
 library(tidyverse)
 library(patchwork)
 library(DESeq2)

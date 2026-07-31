@@ -1,9 +1,10 @@
+### Everything until USER SETTINGS is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=trinity
-#SBATCH --output=/sci/labs/ariel.chipman/idansh/scripts/logs/trinity_%j.out
-#SBATCH --error=/sci/labs/ariel.chipman/idansh/scripts/errors/trinity_%j.err
+#SBATCH --mail-user=user@email.com
+#SBATCH --output=/path/to/output_%j.out
+#SBATCH --error=/path/to/error_%j.err
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=200G
@@ -20,8 +21,8 @@ DATA_DIR="$BASE_DIR/trimmed_PE"
 OUTPUT_DIR="$BASE_DIR/trinity_out"
 SAMPLE_NAME="$(basename "$BASE_DIR")"
 
-# --- CRITICAL: Apptainer Path ---
-TRINITY_SIF="/sci/labs/ariel.chipman/idansh/shared_software/trinityrnaseq.v2.15.2.simg"
+# --- Apptainer Path ---
+TRINITY_SIF="${2:-/path/to/trinityrnaseq.simg}"
 
 if [[ -z "$DATA_DIR" ]]; then
     echo "Error: No input directory provided."

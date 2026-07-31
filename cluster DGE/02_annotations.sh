@@ -1,3 +1,4 @@
+### Everything until Environment is specific for HUJI CLUSTER environment
 #!/bin/bash
 #SBATCH --job-name=full_protein_annotations
 #SBATCH --cpus-per-task=32
@@ -15,7 +16,7 @@ OUTPUT_DIR=${INPUT_DIR}/annotations
 
 [[ ! -f $PROTEOME_FASTA ]] && { echo "ERROR: $PROTEOME_FASTA missing"; exit 1; }
 
-# Environment (your setup)
+# Environment
 . /etc/profile.d/huji-lmod.sh
 module load spack miniconda3 
 source /usr/local/spack/opt/spack/linux-debian12-x86_64/gcc-12.2.0/miniconda3-24.3.0-iqeknetqo7ngpr57d6gmu3dg4rzlcgk6/etc/profile.d/conda.sh
@@ -23,8 +24,6 @@ source /usr/local/spack/opt/spack/linux-debian12-x86_64/gcc-12.2.0/miniconda3-24
 # Activate conda environment
 conda activate bio_env
 
-# Source annotation tool environment variables
-source /sci/labs/ariel.chipman/idansh/env_setup.sh
 
 mkdir -p $OUTPUT_DIR/{eggnog,diamond,signalp6,logs}
 
