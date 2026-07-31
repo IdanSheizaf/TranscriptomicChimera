@@ -82,7 +82,7 @@ TranscriptomicChimera/
 ### 1. Assembly & Decontamination (`transcriptome assembly/`)
 All assembly scripts are standardized SLURM wrappers that accept the target project folder as `$1`:
 1. **Quality Assessment & Trimming**: `01_fastq.sh` runs FastQC; `02_trim_fastp.sh` (or `02_trim_PE.sh`) cleans raw reads.
-2. **De Novo Assembly**: `03_trinity.sh` (or `03_trinity_SR.sh`) constructs species-specific reference transcriptomes.
+2. **De Novo Assembly**: `03_trinity.sh` constructs species-specific reference transcriptomes.
 3. **Coding Prediction & Redundancy Reduction**: `04_TD2.sh` runs TransDecoder; `05_CDHIT.sh` clusters isoforms at 95% nucleotide identity.
 4. **Decontamination**: `08_mmseqs_decontam_ID_removal.sh` filters out non-arthropod contaminant sequences using `MMseqs2` against UniProt/NCBI taxonomy databases.
 5. **Quality Assessment**: Assembly integrity is verified before and after decontamination using `BUSCO` (`06_BUSCO.sh`, `09_BUSCO_after_decontam.sh`).
