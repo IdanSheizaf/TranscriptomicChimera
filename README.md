@@ -40,7 +40,8 @@ TranscriptomicChimera/
 │   ├── 06_BUSCO.sh             # Assembly completeness evaluation (BUSCO)
 │   ├── 07_Bowtie.sh            # Read re-mapping rate evaluation (Bowtie2)
 │   ├── 08_mmseqs_decontam_ID_removal.sh  # Taxonomic decontamination (MMseqs2)
-│   └── 09_BUSCO_after_decontam.sh       # Post-decontamination evaluation
+│   ├── 09_BUSCO_after_decontam.sh       # Post-decontamination evaluation
+│   └── 10_ODB-mapper.sh                # OrthoDB comparative orthology mapping
 ├── cluster DGE/                # Quantification, annotation, & DESeq2 contrasts
 │   ├── 00_index.sh             # Salmon index construction
 │   ├── 01_salmon_quant.sh      # Read quantification (Salmon)
@@ -85,6 +86,7 @@ All assembly scripts are standardized SLURM wrappers that accept the target proj
 3. **Coding Prediction & Redundancy Reduction**: `04_TD2.sh` runs TransDecoder; `05_CDHIT.sh` clusters isoforms at 95% nucleotide identity.
 4. **Decontamination**: `08_mmseqs_decontam_ID_removal.sh` filters out non-arthropod contaminant sequences using `MMseqs2` against UniProt/NCBI taxonomy databases.
 5. **Quality Assessment**: Assembly integrity is verified before and after decontamination using `BUSCO` (`06_BUSCO.sh`, `09_BUSCO_after_decontam.sh`).
+6. **Comparative Orthology Annotation**: `10_ODB-mapper.sh` maps clean protein assemblies against OrthoDB (Arthropoda taxid `6657`) to build the master orthology annotation table used in cross-species downstream analyses.
 
 ### 2. Quantification & Differential Expression (`cluster DGE/`)
 Standardized, parameterized pipeline scripts taking the project directory path as `$1`:
