@@ -4,10 +4,10 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=64G  
 #SBATCH --time=12:00:00
-#SBATCH --output=logs/03_full.out
-#SBATCH --error=logs/03_full.err
+#SBATCH --output=/path/to/log.out
+#SBATCH --error=/path/to/error.err
 #SBATCH --mail-type=FAIL,BEGIN,END
-#SBATCH --mail-user=idan.slurm@gmail.com
+#SBATCH --mail-user=user@email.com
 
 set -e
 INPUT_DIR=$1

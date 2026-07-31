@@ -10,7 +10,7 @@
 #SBATCH --error=/path/to/error_%j.err
 #SBATCH --mail-type=FAIL,BEGIN,END
 
-# 2. Environment
+# --- Environment ---
 . /etc/profile.d/huji-lmod.sh
 module load spack salmon
 
