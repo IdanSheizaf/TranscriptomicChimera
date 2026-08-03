@@ -36,7 +36,7 @@ TranscriptomicChimera/
 │   ├── 02_trim_fastp.sh        # Adapter & quality trimming (fastp / Trimmomatic)
 │   ├── 03_trinity.sh           # De novo assembly (Trinity)
 │   ├── 04_TD2.sh               # Coding region prediction (TransDecoder)
-│   ├── 05_CDHIT.sh             # Redundancy clustering at 98% identity (CD-HIT-EST)
+│   ├── 05_CDHIT.sh             # Redundancy clustering at 95% identity (CD-HIT-EST)
 │   ├── 06_BUSCO.sh             # Assembly completeness evaluation (BUSCO)
 │   ├── 07_Bowtie.sh            # Read re-mapping rate evaluation (Bowtie2)
 │   ├── 08_mmseqs_decontam_ID_removal.sh  # Taxonomic decontamination (MMseqs2)
