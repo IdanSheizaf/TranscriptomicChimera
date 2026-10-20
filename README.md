@@ -67,12 +67,12 @@ TranscriptomicChimera/
 | Analysis Script | Target Manuscript Figure | Description |
 | :--- | :--- | :--- |
 | **`PCA.R`** | **Figure 1** | Species-specific principal component analysis (PCA) of raw tissue expression. |
-| **`combined_species_pca.R`** | **Figure 2** | Cross-species combined PCA after ComBat-seq batch correction demonstrating unified moult trajectory. |
+| **`combined_species_pca.R`** | **Figure 2** | Cross-species combined PCA after ComBat-seq batch correction demonstrating unified moult trajectory and tissue-specific clustering (supports phase, tissue, and combined phase/body part aesthetics). |
 | **`biphasic_intramoult_analysis.R`** | **Figure 3** | Expression dynamics during the intramoult interval, highlighting anterior vs posterior ecdysial decoupling. |
 | **`biclustering_analysis.R`** | **Figure 4A** | Biclustering heatmap variations across tissues and ordering strategies. |
 | **`cross_species_core.R`** | **Figure 4B** | Core conserved orthologous groups (OGs) shared across all three terrestrial isopod species. |
-| **`hlegs_vs_flegs_analysis.R`** | **Figure 5A–B** | Temporal functional asymmetry contrasting Hind Legs (`h.legs`) against Front Legs (`f.legs`) across all phases. |
-| **`head_vs_flegs_analysis.R`** | **Figure 5C–D** | Functional signature enrichment (MF & BP GO terms) in Head relative to Front Legs. |
+| **`hlegs_vs_flegs_analysis.R`** | **Figure 5A–B** | Temporal functional asymmetry contrasting Hind Legs (`h.legs`) against Front Legs (`f.legs`) across all phases (vector PDF with balanced $\le 2$-line GO term wrapping and collision-free typography). |
+| **`head_vs_flegs_analysis.R`** | **Figure 5C–D** | Functional signature enrichment (MF & BP GO terms) in Head relative to Front Legs (vector PDF with balanced $\le 2$-line GO term wrapping and collision-free typography). |
 | **`universal_moult_toolkit_synthesis.R`** | **Figure 6** | Comprehensive synthesis of the universal terrestrial isopod candidate gene atlas and moult toolkit. |
 
 ---
@@ -97,6 +97,8 @@ Standardized, parameterized pipeline scripts taking the project directory path a
 ### 3. Downstream Manuscript Visualizations (`downstream_analysis/`)
 - All scripts in `downstream_analysis/` automatically resolve `PROJECT_ROOT` via `config.R` and `utils.R` without hardcoded system paths.
 - Cross-species counts are batch-corrected using ComBat-seq and VST-transformed.
+- `combined_species_pca.R` generates multi-factor PCA projections colored by moult phase and differentiated by body part/tissue shape.
+- `hlegs_vs_flegs_analysis.R` and `head_vs_flegs_analysis.R` render publication-grade vector graphics (`.pdf`, $38 \times 70$ in) implementing balanced word wrapping (`format_go_term`, $\le 2$ lines per term), domain faceting, and collision-free typography.
 
 ---
 
