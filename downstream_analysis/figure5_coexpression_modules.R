@@ -1,14 +1,13 @@
 # ==============================================================================
-# MANUSCRIPT FIGURE 5: Conserved Co-Expression Modules
+# MANUSCRIPT FIGURE 5: Conserved Co-Expression Modules (Unsupervised, 100 Genes)
 # 
 # This script identifies and visualizes the conserved co-expression modules 
-# across all species, tissues, and moult phases using ComplexHeatmap on 
-# ComBat-seq batch-corrected VST expression of shared Orthologous Groups (OGs).
+# across all species, tissues, and moult phases using unsupervised ComplexHeatmap 
+# on ComBat-seq batch-corrected VST expression of top 100 shared OGs.
 #
 # Output:
-#   - Figure_5_Coexpression_Modules.pdf / .png (Phase-structured primary figure)
-#   - Figure_5_Unsupervised_Modules.pdf / .png (Unsupervised version)
-#   - Structured_Module_[1-8]_Genes.csv
+#   - Figure_5_Coexpression_Modules.pdf / .png (Unsupervised primary figure)
+#   - Clusters_100genes_unsupervised.csv (Table S3 source)
 # ==============================================================================
 
 if (file.exists("utils.R")) {
@@ -24,7 +23,7 @@ library(circlize)
 library(RColorBrewer)
 library(tidyverse)
 
-log_header("Figure 5: Conserved Co-Expression Modules")
+log_header("Figure 5: Conserved Co-Expression Modules (Unsupervised, 100 Genes)")
 
 all_species <- c("maculatum", "laevis", "officinalis")
 species_full_names <- c(
@@ -102,19 +101,20 @@ ha_col_base <- HeatmapAnnotation(
 out_dir <- get_output_path("Biclustering")
 if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
 
-# Phase-Structured Heatmap (Primary Manuscript Figure 5)
-cat("Rendering Figure 5: Phase-Structured Heatmap...\n")
+# Unsupervised Biclustering Heatmap (Primary Manuscript Figure 5)
+cat("Rendering Figure 5: Unsupervised Biclustering (100 Genes)...\n")
 set.seed(42)
-ht_structured <- Heatmap(
+ht_unsupervised <- Heatmap(
   mat_scaled, 
   name = "Z-score",
-  column_title = "Figure 5: Conserved Co-Expression Modules Across the Biphasic Moult",
+  column_title = "Figure 5: Conserved Co-Expression Modules (Unsupervised Biclustering, 100 Genes)",
   top_annotation = ha_col_base,
   row_km = 8, 
-  column_split = combined_meta$phase,
-  row_gap = unit(2, "mm"),
+  column_km = 4,
+  row_gap = unit(1.5, "mm"),
+  column_gap = unit(1.5, "mm"),
   cluster_row_slices = TRUE, 
-  cluster_column_slices = FALSE, # Preserve chronological biological order
+  cluster_column_slices = TRUE,
   show_row_names = FALSE,
   show_column_names = FALSE,
   cluster_rows = TRUE,
@@ -129,26 +129,39 @@ fig5_pdf <- file.path(out_dir, "Figure_5_Coexpression_Modules.pdf")
 fig5_png <- file.path(out_dir, "Figure_5_Coexpression_Modules.png")
 
 pdf(fig5_pdf, width = 13, height = 15)
-ht_st_drawn <- draw(ht_structured, merge_legend = TRUE)
+ht_un_drawn <- draw(ht_unsupervised, merge_legend = TRUE)
 dev.off()
 
 png(fig5_png, width = 13, height = 15, units = "in", res = 300)
-draw(ht_structured, merge_legend = TRUE)
+draw(ht_unsupervised, merge_legend = TRUE)
 dev.off()
 
-# Export Module Gene Lists
+# Export Module Gene Lists & Table S3
 ann_master <- load_annotations("maculatum") %>%
   dplyr::select(ODB_OG, Preferred_name) %>%
   dplyr::distinct(ODB_OG, .keep_all = TRUE)
 
-row_orders_st <- row_order(ht_st_drawn)
-for (i in seq_along(row_orders_st)) {
-  module_df <- data.frame(ODB_OG = rownames(mat_scaled)[row_orders_st[[i]]]) %>%
+row_orders_un <- row_order(ht_un_drawn)
+cluster_100_list <- list()
+for (i in seq_along(row_orders_un)) {
+  module_df <- data.frame(ODB_OG = rownames(mat_scaled)[row_orders_un[[i]]]) %>%
     left_join(ann_master, by = "ODB_OG") %>%
-    mutate(Module = paste0("Structured_Module_", i))
-  write_csv(module_df, file.path(out_dir, paste0("Structured_Module_", i, "_Genes.csv")))
+    mutate(Cluster = paste0("Cluster_", i))
+  cluster_100_list[[i]] <- module_df
+  write_csv(module_df, file.path(out_dir, paste0("Unsupervised_Module_", i, "_Genes.csv")))
 }
+
+table_s3_df <- bind_rows(cluster_100_list)
+table_s3_file <- file.path(out_dir, "Clusters_100genes_unsupervised.csv")
+write_csv(table_s3_df, table_s3_file)
+
+csv_out <- get_output_path()
+if (dir.exists(csv_out)) {
+  write_csv(table_s3_df, file.path(csv_out, "Clusters_100genes_unsupervised.csv"))
+}
+cat("  - Exported Table S3:", table_s3_file, "(", nrow(table_s3_df), " OGs)\n")
 
 cat("\nSUCCESS: Figure 5 generated and saved to:\n")
 cat("  -", fig5_pdf, "\n")
 cat("  -", fig5_png, "\n")
+
