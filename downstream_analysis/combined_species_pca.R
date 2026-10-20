@@ -28,6 +28,20 @@ species_full_names <- c(
   "officinalis" = "Armadillo officinalis"
 )
 
+moult_colors <- c(
+  "intermoult" = "#440154", 
+  "premoult"   = "#31688E", 
+  "intramoult" = "#35B779", 
+  "postmoult"  = "#FDE725"
+)
+
+moult_shapes <- c(
+  "f.legs" = 16, # Closed circle
+  "h.legs" = 17, # Closed triangle
+  "head"   = 15, # Closed diamond (filled)
+  "thorax" = 18   # Open diamond
+)
+
 # === FUNCTIONS ===
 
 #' Load Raw Counts and Metadata, and Translate to OGs
@@ -137,48 +151,64 @@ for (n_genes in gene_thresholds) {
   }
   
   # Visualization helper
-  plot_any_pca <- function(pca_res, pca_var_pct, x_pc = 1, y_pc = 2, color_var = "phase", title_prefix = "Combined PCA") {
+  plot_any_pca <- function(pca_res, pca_var_pct, x_pc = 1, y_pc = 2, color_var = "phase", shape_var = "species", title_prefix = "Combined PCA") {
     plot_df <- data.frame(
-      PCx = pca_res$x[, x_pc],
-      PCy = pca_res$x[, y_pc],
-      species = combined_meta$species_full,
-      phase = combined_meta$phase,
-      tissue = combined_meta$tissue
-    )
-    
-    sub_text <- paste0("Included OGs: ", actual_n)
-    if (exists("global_perm")) {
-       sub_text <- paste0(sub_text, " | Global PERMANOVA (Phase): R² = ", round(global_perm$R2[1], 2), 
-                         ", p = ", format.pval(global_perm$`Pr(>F)`[1], digits = 3))
-    }
+       PCx = pca_res$x[, x_pc],
+       PCy = pca_res$x[, y_pc],
+       species = combined_meta$species_full,
+       phase = combined_meta$phase,
+       tissue = combined_meta$tissue
+     )
+     
+     sub_text <- paste0("Included OGs: ", actual_n)
+     if (exists("global_perm")) {
+        sub_text <- paste0(sub_text, " | Global PERMANOVA (Phase): R² = ", round(global_perm$R2[1], 2), 
+                          ", p = ", format.pval(global_perm$`Pr(>F)`[1], digits = 3))
+     }
 
-    p <- ggplot(plot_df, aes(x = PCx, y = PCy, color = !!sym(color_var), shape = species)) +
-      geom_point(size = 4, alpha = 0.7) +
-      theme_bw() +
-      labs(
-        title = paste0(title_prefix, ": PC", x_pc, " vs PC", y_pc),
-        subtitle = sub_text,
-        x = paste0("PC", x_pc, ": ", pca_var_pct[x_pc], "% variance"),
-        y = paste0("PC", y_pc, ": ", pca_var_pct[y_pc], "% variance"),
-        shape = "Species"
-      ) +
-      theme(plot.title = element_text(face = "bold"),
-            legend.text = element_text(face = "italic"))
-    
-    if (color_var == "phase") {
-      p <- p + scale_color_manual(values = c("intermoult"="#440154", "premoult"="#31688E", "intramoult"="#35B779", "postmoult"="#FDE725"))
-    }
-    return(p)
-  }
+    shape_label <- if (shape_var == "species") "Species" else if (shape_var == "tissue") "Body part" else shape_var
+    color_label <- if (color_var == "phase") "Phase" else if (color_var == "tissue") "Body part" else color_var
 
-  ggsave(file.path(out_dir, "Combined_PC1v2_phase.png"),  plot_any_pca(pca_full, pca_var, 1, 2, "phase"),  width = 10, height = 7, create.dir = TRUE)
-  ggsave(file.path(out_dir, "Combined_PC1v3_phase.png"),  plot_any_pca(pca_full, pca_var, 1, 3, "phase"),  width = 10, height = 7, create.dir = TRUE)
-  ggsave(file.path(out_dir, "Combined_PC2v3_phase.png"),  plot_any_pca(pca_full, pca_var, 2, 3, "phase"),  width = 10, height = 7, create.dir = TRUE)
+    p <- ggplot(plot_df, aes(x = PCx, y = PCy, color = !!sym(color_var), shape = !!sym(shape_var))) +
+       geom_point(size = 4, alpha = 0.7) +
+       theme_bw() +
+       labs(
+         title = paste0(title_prefix, ": PC", x_pc, " vs PC", y_pc),
+         subtitle = sub_text,
+         x = paste0("PC", x_pc, ": ", pca_var_pct[x_pc], "% variance"),
+         y = paste0("PC", y_pc, ": ", pca_var_pct[y_pc], "% variance"),
+         color = color_label,
+         shape = shape_label
+       ) +
+       theme(plot.title = element_text(face = "bold"))
+     
+     if (shape_var == "species") {
+       p <- p + theme(legend.text = element_text(face = "italic"))
+     }
+     
+     if (color_var == "phase") {
+       p <- p + scale_color_manual(values = moult_colors)
+     }
+     if (shape_var == "tissue") {
+       p <- p + scale_shape_manual(values = moult_shapes)
+     }
+     return(p)
+   }
 
-  # Added: Plots by Tissue
-  ggsave(file.path(out_dir, "Combined_PC1v2_tissue.png"), plot_any_pca(pca_full, pca_var, 1, 2, "tissue"), width = 10, height = 7, create.dir = TRUE)
-  ggsave(file.path(out_dir, "Combined_PC1v3_tissue.png"), plot_any_pca(pca_full, pca_var, 1, 3, "tissue"), width = 10, height = 7, create.dir = TRUE)
-  ggsave(file.path(out_dir, "Combined_PC2v3_tissue.png"), plot_any_pca(pca_full, pca_var, 2, 3, "tissue"), width = 10, height = 7, create.dir = TRUE)
+  # 1. Type 1: Color = Phase, Shape = Species
+  ggsave(file.path(out_dir, "Combined_PC1v2_phase.png"),  plot_any_pca(pca_full, pca_var, 1, 2, color_var = "phase", shape_var = "species"),  width = 10, height = 7, create.dir = TRUE)
+  ggsave(file.path(out_dir, "Combined_PC1v3_phase.png"),  plot_any_pca(pca_full, pca_var, 1, 3, color_var = "phase", shape_var = "species"),  width = 10, height = 7, create.dir = TRUE)
+  ggsave(file.path(out_dir, "Combined_PC2v3_phase.png"),  plot_any_pca(pca_full, pca_var, 2, 3, color_var = "phase", shape_var = "species"),  width = 10, height = 7, create.dir = TRUE)
+
+  # 2. Type 2: Color = Tissue, Shape = Species
+  ggsave(file.path(out_dir, "Combined_PC1v2_tissue.png"), plot_any_pca(pca_full, pca_var, 1, 2, color_var = "tissue", shape_var = "species"), width = 10, height = 7, create.dir = TRUE)
+  ggsave(file.path(out_dir, "Combined_PC1v3_tissue.png"), plot_any_pca(pca_full, pca_var, 1, 3, color_var = "tissue", shape_var = "species"), width = 10, height = 7, create.dir = TRUE)
+  ggsave(file.path(out_dir, "Combined_PC2v3_tissue.png"), plot_any_pca(pca_full, pca_var, 2, 3, color_var = "tissue", shape_var = "species"), width = 10, height = 7, create.dir = TRUE)
+
+  # 3. Type 3 (NEW): Color = Phase, Shape = Body part (Tissue)
+  ggsave(file.path(out_dir, "Combined_PC1v2_phase_tissue.png"), plot_any_pca(pca_full, pca_var, 1, 2, color_var = "phase", shape_var = "tissue"), width = 10, height = 7, create.dir = TRUE)
+  ggsave(file.path(out_dir, "Combined_PC1v3_phase_tissue.png"), plot_any_pca(pca_full, pca_var, 1, 3, color_var = "phase", shape_var = "tissue"), width = 10, height = 7, create.dir = TRUE)
+  ggsave(file.path(out_dir, "Combined_PC2v3_phase_tissue.png"), plot_any_pca(pca_full, pca_var, 2, 3, color_var = "phase", shape_var = "tissue"), width = 10, height = 7, create.dir = TRUE)
 
   # PC Boxplots with Stats
   pc_boxplots <- list()
@@ -190,7 +220,7 @@ for (n_genes in gene_thresholds) {
       geom_violin(alpha = 0.3, color = NA) +
       geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.2) + 
       geom_jitter(aes(shape = species), width = 0.1, size = 1.2, alpha = 0.5) +
-      theme_bw() + scale_fill_manual(values = c("intermoult"="#440154", "premoult"="#31688E", "intramoult"="#35B779", "postmoult"="#FDE725")) +
+      theme_bw() + scale_fill_manual(values = moult_colors) +
       labs(title = paste0("PC", i, " (", pca_var[i], "%)"), 
            subtitle = paste0("Kruskal-Wallis p = ", format.pval(kw_test$p.value, digits = 3)),
            x = NULL, y = NULL) +

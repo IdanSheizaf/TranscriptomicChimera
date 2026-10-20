@@ -61,6 +61,31 @@ get_enrichment_from_csv <- function(species, dge_path, go_type = "mf", ann = NUL
     mutate(species = species)
 }
 
+format_go_term <- function(text) {
+  sapply(text, function(t) {
+    words <- unlist(strsplit(t, "\\s+"))
+    n <- length(words)
+    if (n <= 5) {
+      return(t)
+    } else {
+      if (grepl(",", t)) {
+        parts <- unlist(strsplit(t, ",\\s*"))
+        if (length(parts) == 2) {
+          w1 <- length(unlist(strsplit(parts[1], "\\s+")))
+          w2 <- length(unlist(strsplit(parts[2], "\\s+")))
+          if (w1 >= 4 && w2 >= 4 && abs(w1 - w2) <= 3) {
+            return(paste0(parts[1], ",\n", parts[2]))
+          }
+        }
+      }
+      mid <- ceiling(n / 2)
+      line1 <- paste(words[1:mid], collapse = " ")
+      line2 <- paste(words[(mid + 1):n], collapse = " ")
+      return(paste0(line1, "\n", line2))
+    }
+  }, USE.NAMES = FALSE)
+}
+
 phases <- c("intermoult", "premoult", "intramoult", "postmoult")
 
 for (gt in c("mf", "bp")) {
@@ -118,32 +143,38 @@ for (gt in c("mf", "bp")) {
 
   top_plot_data <- plot_data %>% group_by(phase, Domain) %>% slice_min(avg_padj, n = 5) %>% ungroup()
 
-  # Visualization with massive font sizes, giant shape points, line wrapping, and horizontal domain headers
-  p <- ggplot(top_plot_data, aes(x = phase, y = reorder(stringr::str_wrap(Description, width = 45), phase, FUN = function(x) min(as.numeric(x))), 
+  # Visualization with large manuscript-ready typography, <=2 line GO terms, and collision-free spacing
+  p <- ggplot(top_plot_data, aes(x = phase, y = reorder(format_go_term(Description), phase, FUN = function(x) min(as.numeric(x))), 
                                size = max_count, color = -log10(avg_padj))) +
-    geom_point(aes(shape = Conservation), stroke = 2.5) +
-    scale_size_continuous(range = c(8, 30), name = "Max Gene Count") +
-    scale_color_viridis_c(option = "plasma", name = "-log10(avg p.adj)") +
+    geom_point(aes(shape = Conservation), stroke = 3.0) +
+    scale_size_continuous(range = c(9, 30), name = "Max Gene Count") +
+    scale_color_viridis_c(option = "plasma", name = "-log10(avg p.adjust)") +
     scale_shape_manual(values = c("Universal (3-way)" = 17, "Conserved (2-way)" = 16)) +
+    scale_x_discrete(drop = FALSE) + 
     facet_grid(Domain ~ ., scales = "free_y", space = "free_y") +
-    theme_bw(base_size = 32) +
+    theme_bw(base_size = 40) +
     theme(
-      axis.text.y = element_text(size = 34, face = "bold", lineheight = 0.85, color = "black"),
-      axis.text.x = element_text(size = 38, face = "bold", color = "black", angle = 45, hjust = 1, vjust = 1),
-      strip.text.y = element_text(size = 28, face = "bold", color = "black", angle = 0, lineheight = 0.85),
-      plot.title = element_text(size = 42, face = "bold"),
-      plot.subtitle = element_text(size = 34),
-      legend.text = element_text(size = 30),
-      legend.title = element_text(size = 32, face = "bold"),
-      legend.key.size = unit(3, "lines"),
-      panel.spacing = unit(2.5, "lines")
+      axis.text.y = element_text(size = 48, face = "bold", lineheight = 0.78, color = "black"),
+      axis.text.x = element_text(size = 52, face = "bold", color = "black", angle = 45, hjust = 1, vjust = 1),
+      axis.title.x = element_text(size = 54, face = "bold", color = "black", margin = margin(t = 24)),
+      axis.ticks.y = element_line(color = "grey30", linewidth = 1.5),
+      axis.ticks.length.y = unit(0.6, "cm"),
+      strip.text.y = element_text(size = 46, face = "bold", color = "black", angle = 0, lineheight = 0.85),
+      plot.title = element_text(size = 56, face = "bold"),
+      plot.subtitle = element_text(size = 42),
+      legend.text = element_text(size = 36),
+      legend.title = element_text(size = 40, face = "bold"),
+      legend.key.size = unit(4.5, "lines"),
+      panel.spacing = unit(2.5, "lines"),
+      panel.grid.major.y = element_line(color = "grey85", linewidth = 1.0),
+      plot.margin = margin(30, 30, 30, 30)
     ) +
-    guides(shape = guide_legend(override.aes = list(size = 18))) +
+    guides(shape = guide_legend(override.aes = list(size = 20))) +
     labs(title = paste("Head vs Front-Leg Specific Signatures (", toupper(gt), ")", sep=""), 
          subtitle = "Terms enriched in Head relative to Front Legs", 
          x = "Moult Phase", y = NULL, shape = "Conservation")
 
-  ggsave(file.path(out_dir, paste0("Head_vs_FLegs_", toupper(gt), ".png")), p, width = 26, height = 40, bg = "white")
+  ggsave(file.path(out_dir, paste0("Head_vs_FLegs_", toupper(gt), ".pdf")), p, width = 38, height = 70, limitsize = FALSE, bg = "white")
   write_csv(consensus, file.path(out_dir, paste0("Head_vs_FLegs_Consensus_", toupper(gt), ".csv")))
 }
 
