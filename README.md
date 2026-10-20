@@ -64,16 +64,18 @@ TranscriptomicChimera/
 
 ### 🗺️ Mapping Downstream Scripts to Manuscript Figures
 
+> *(Note: **Figure 1** is the conceptual overview illustrating the phylogenetic framework, four moult phases, and anatomical sampling design).*
+
 | Analysis Script | Target Manuscript Figure | Description |
 | :--- | :--- | :--- |
-| **`PCA.R`** | **Figure 1** | Species-specific principal component analysis (PCA) of raw tissue expression. |
-| **`combined_species_pca.R`** | **Figure 2** | Cross-species combined PCA after ComBat-seq batch correction demonstrating unified moult trajectory and tissue-specific clustering (supports phase, tissue, and combined phase/body part aesthetics). |
-| **`biphasic_intramoult_analysis.R`** | **Figure 3** | Expression dynamics during the intramoult interval, highlighting anterior vs posterior ecdysial decoupling. |
-| **`biclustering_analysis.R`** | **Figure 4A** | Biclustering heatmap variations across tissues and ordering strategies. |
-| **`cross_species_core.R`** | **Figure 4B** | Core conserved orthologous groups (OGs) shared across all three terrestrial isopod species. |
-| **`hlegs_vs_flegs_analysis.R`** | **Figure 5A–B** | Temporal functional asymmetry contrasting Hind Legs (`h.legs`) against Front Legs (`f.legs`) across all phases (vector PDF with balanced $\le 2$-line GO term wrapping and collision-free typography). |
-| **`head_vs_flegs_analysis.R`** | **Figure 5C–D** | Functional signature enrichment (MF & BP GO terms) in Head relative to Front Legs (vector PDF with balanced $\le 2$-line GO term wrapping and collision-free typography). |
-| **`universal_moult_toolkit_synthesis.R`** | **Figure 6** | Comprehensive synthesis of the universal terrestrial isopod candidate gene atlas and moult toolkit. |
+| **`PCA.R`** | **Figure 2** | Species-specific principal component analysis (PCA) of raw tissue expression establishing the continuous transcriptomic clocks and initial intramoult hind-leg decoupling. |
+| **`biphasic_intramoult_analysis.R`** | **Figure 3** | Quantitative appendicular asymmetry demonstrating the ~34-fold surge in differentially expressed genes (DEGs) between anterior and posterior limbs during Intramoult (The Transcriptomic Chimera). |
+| **`combined_species_pca.R`** | **Figure 4** | Cross-species combined PCA after ComBat-seq batch correction demonstrating the universal phase engine and conserved anatomical decoupling (supports phase, tissue, and combined phase/body part aesthetics). |
+| **`biclustering_analysis.R`** | **Figure 5** | Conserved co-expression modules partitioned across phases and body parts, capturing spatial regulation (e.g. pre-ecdysial surge in the head). |
+| **`cross_species_core.R`** | **Figure 5 / Figure S2** | Core conserved orthologous groups (OGs) and 3-way Venn intersection shared across all three terrestrial isopod species. |
+| **`head_vs_flegs_analysis.R`** | **Figure 6 / Figure S3** | Cephalic functional enrichment (Biological Process in Fig. 6; Molecular Function in Fig. S3) highlighting stable neuroendocrine regulation relative to front legs (vector PDF with balanced $\le 2$-line GO term wrapping). |
+| **`hlegs_vs_flegs_analysis.R`** | **Figure 6 / Figure S3** | Locomotory functional asymmetry waves (Biological Process in Fig. 6; Molecular Function in Fig. S3) contrasting hind legs against front legs across all phases (vector PDF with balanced $\le 2$-line GO term wrapping). |
+| **`universal_moult_toolkit_synthesis.R`** | **Figure S4** | Conserved Candidate Gene Atlas detailing longitudinal trajectories of high-impact candidate orthologs across species and phases. |
 
 ---
 
@@ -97,8 +99,8 @@ Standardized, parameterized pipeline scripts taking the project directory path a
 ### 3. Downstream Manuscript Visualizations (`downstream_analysis/`)
 - All scripts in `downstream_analysis/` automatically resolve `PROJECT_ROOT` via `config.R` and `utils.R` without hardcoded system paths.
 - Cross-species counts are batch-corrected using ComBat-seq and VST-transformed.
-- `combined_species_pca.R` generates multi-factor PCA projections colored by moult phase and differentiated by body part/tissue shape.
-- `hlegs_vs_flegs_analysis.R` and `head_vs_flegs_analysis.R` render publication-grade vector graphics (`.pdf`, $38 \times 70$ in) implementing balanced word wrapping (`format_go_term`, $\le 2$ lines per term), domain faceting, and collision-free typography.
+- `combined_species_pca.R` (**Figure 4**) generates multi-factor PCA projections colored by moult phase and differentiated by body part/tissue shape.
+- `hlegs_vs_flegs_analysis.R` and `head_vs_flegs_analysis.R` (**Figure 6** / **Figure S3**) render publication-grade vector graphics (`.pdf`, $38 \times 70$ in) implementing balanced word wrapping (`format_go_term`, $\le 2$ lines per term), domain faceting, and collision-free typography.
 
 ---
 
