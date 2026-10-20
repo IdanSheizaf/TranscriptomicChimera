@@ -30,7 +30,9 @@ get_data_path <- function(species = ACTIVE_SPECIES, sub_dir = NULL, filename = N
     file.path(root, species),
     file.path(root, "cluster DGE", species),
     file.path(root, "local_scripts", "RNAseq", species),
-    file.path(root, "..", "cluster DGE", species)
+    file.path(root, "..", "cluster DGE", species),
+    file.path(root, "..", "local_scripts", "RNAseq", species),
+    file.path(dirname(root), "local_scripts", "RNAseq", species)
   )
   
   base_path <- candidates[dir.exists(candidates)][1]
@@ -46,6 +48,24 @@ get_data_path <- function(species = ACTIVE_SPECIES, sub_dir = NULL, filename = N
     path <- file.path(path, filename)
   }
   
+  return(path)
+}
+
+#' Get Output Path (Locating existing or target output directory)
+get_output_path <- function(sub_dir = NULL, filename = NULL) {
+  root <- get_project_root()
+  candidates <- c(
+    file.path(root, "output_csv"),
+    file.path(dirname(root), "local_scripts", "output_csv"),
+    file.path(root, "..", "local_scripts", "output_csv")
+  )
+  base_path <- candidates[dir.exists(candidates)][1]
+  if (is.na(base_path)) {
+    base_path <- file.path(root, "output_csv")
+  }
+  path <- base_path
+  if (!is.null(sub_dir)) path <- file.path(path, sub_dir)
+  if (!is.null(filename)) path <- file.path(path, filename)
   return(path)
 }
 
@@ -67,7 +87,9 @@ load_annotations <- function(species = ACTIVE_SPECIES) {
   master_candidates <- c(
     file.path(root, "de_novo_transcriptomes_crustacea.og.annotations"),
     file.path(root, "transcriptome assembly", "de_novo_transcriptomes_crustacea.og.annotations"),
-    file.path(root, "local_scripts", "RNAseq", "de_novo_transcriptomes_crustacea.og.annotations")
+    file.path(root, "local_scripts", "RNAseq", "de_novo_transcriptomes_crustacea.og.annotations"),
+    file.path(root, "..", "local_scripts", "RNAseq", "de_novo_transcriptomes_crustacea.og.annotations"),
+    file.path(dirname(root), "local_scripts", "RNAseq", "de_novo_transcriptomes_crustacea.og.annotations")
   )
   master_path <- master_candidates[file.exists(master_candidates)][1]
   
@@ -188,3 +210,48 @@ log_header <- function(script_name) {
   cat(" DATE:    ", as.character(Sys.time()), "\n")
   cat(rep("=", 60), "\n\n", sep = "")
 }
+
+# --- SHARED VISUALIZATION AESTHETICS ---
+
+# Standard Phase Colors (The "Clock" Colors)
+moult_colors <- c(
+  "intermoult" = "#440154", 
+  "premoult"   = "#31688E", 
+  "intramoult" = "#35B779", 
+  "postmoult"  = "#FDE725"
+)
+
+# Standard Tissue Shapes
+moult_shapes <- c(
+  "f.legs" = 16, # Closed circle
+  "h.legs" = 17, # Closed triangle
+  "head"   = 15, # Closed square
+  "thorax" = 18   # Diamond
+)
+
+#' Balanced GO Term Formatter for Multi-line Wrapping (<= 2 lines)
+format_go_term <- function(text) {
+  sapply(text, function(t) {
+    words <- unlist(strsplit(t, "\\s+"))
+    n <- length(words)
+    if (n <= 5) {
+      return(t)
+    } else {
+      if (grepl(",", t)) {
+        parts <- unlist(strsplit(t, ",\\s*"))
+        if (length(parts) == 2) {
+          w1 <- length(unlist(strsplit(parts[1], "\\s+")))
+          w2 <- length(unlist(strsplit(parts[2], "\\s+")))
+          if (w1 >= 4 && w2 >= 4 && abs(w1 - w2) <= 3) {
+            return(paste0(parts[1], ",\n", parts[2]))
+          }
+        }
+      }
+      mid <- ceiling(n / 2)
+      line1 <- paste(words[1:mid], collapse = " ")
+      line2 <- paste(words[(mid + 1):n], collapse = " ")
+      return(paste0(line1, "\n", line2))
+    }
+  }, USE.NAMES = FALSE)
+}
+

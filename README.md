@@ -52,30 +52,49 @@ TranscriptomicChimera/
 └── downstream_analysis/        # Manuscript figure creation & cross-species synthesis
     ├── config.R                # Master environment configuration & paths
     ├── utils.R                 # Annotation loading & shared helper utilities
-    ├── PCA.R                   # Tissue & species-specific expression PCA
-    ├── combined_species_pca.R  # Multi-species ComBat-seq batch correction & PCA
-    ├── biphasic_intramoult_analysis.R # Biphasic intramoult expression waves
-    ├── biclustering_analysis.R # Biclustering modules across tissues
-    ├── cross_species_core.R    # Conserved core moult gene discovery
-    ├── hlegs_vs_flegs_analysis.R # Temporal expression asymmetry (H. legs vs F. legs)
-    ├── head_vs_flegs_analysis.R  # Functional signature enrichment (Head vs F. legs)
-    └── universal_moult_toolkit_synthesis.R # Terrestrial isopod candidate gene atlas
+    ├── figure2_species_clocks.R          # Figure 2: Species-specific transcriptomic clocks
+    ├── figure3_asymmetry_surge.R         # Figure 3 & Table S1: Appendicular asymmetry surge
+    ├── figure4_universal_pca.R           # Figure 4 & Table S2: Universal ComBat-seq PCA
+    ├── figure5_coexpression_modules.R    # Figure 5: Conserved 100-OG co-expression modules
+    ├── figure6_functional_asymmetry_bp.R # Figure 6 & Table S6: Locomotory functional waves (BP)
+    ├── figureS1_S2_S3_biclustering_suite.R # Figs S1-S3 & Tables S3-S4: Biclustering suite
+    ├── figureS4_venn_diagram.R           # Fig S4 & Table S5: 3-way Venn diagram conserved core
+    ├── figureS5_extended_functional_waves.R # Fig S5 & Tables S7-S9: Extended GO waves
+    ├── figureS6_candidate_atlas.R        # Fig S6 & Table S10: Conserved Candidate Gene Atlas
+    ├── PCA.R                             # Legacy monolithic PCA script
+    ├── combined_species_pca.R            # Legacy combined PCA script
+    ├── biphasic_intramoult_analysis.R    # Legacy intramoult analysis
+    ├── biclustering_analysis.R           # Legacy biclustering script
+    ├── cross_species_core.R              # Legacy core intersection script
+    ├── hlegs_vs_flegs_analysis.R         # Legacy appendicular contrasts script
+    └── head_vs_flegs_analysis.R          # Legacy cephalic contrasts script
 ```
 
-### 🗺️ Mapping Downstream Scripts to Manuscript Figures
+### 🗺️ Mapping Downstream Scripts to Manuscript Figures & Supplementary Tables
 
 > *(Note: **Figure 1** is the conceptual overview illustrating the phylogenetic framework, four moult phases, and anatomical sampling design).*
 
-| Analysis Script | Target Manuscript Figure | Description |
-| :--- | :--- | :--- |
-| **`PCA.R`** | **Figure 2** | Species-specific principal component analysis (PCA) of raw tissue expression establishing the continuous transcriptomic clocks and initial intramoult hind-leg decoupling. |
-| **`biphasic_intramoult_analysis.R`** | **Figure 3** | Quantitative appendicular asymmetry demonstrating the ~34-fold surge in differentially expressed genes (DEGs) between anterior and posterior limbs during Intramoult (The Transcriptomic Chimera). |
-| **`combined_species_pca.R`** | **Figure 4** | Cross-species combined PCA after ComBat-seq batch correction demonstrating the universal phase engine and conserved anatomical decoupling (supports phase, tissue, and combined phase/body part aesthetics). |
-| **`biclustering_analysis.R`** | **Figure 5** | Conserved co-expression modules partitioned across phases and body parts, capturing spatial regulation (e.g. pre-ecdysial surge in the head). |
-| **`cross_species_core.R`** | **Figure 5 / Figure S2** | Core conserved orthologous groups (OGs) and 3-way Venn intersection shared across all three terrestrial isopod species. |
-| **`head_vs_flegs_analysis.R`** | **Figure 6 / Figure S3** | Cephalic functional enrichment (Biological Process in Fig. 6; Molecular Function in Fig. S3) highlighting stable neuroendocrine regulation relative to front legs (vector PDF with balanced $\le 2$-line GO term wrapping). |
-| **`hlegs_vs_flegs_analysis.R`** | **Figure 6 / Figure S3** | Locomotory functional asymmetry waves (Biological Process in Fig. 6; Molecular Function in Fig. S3) contrasting hind legs against front legs across all phases (vector PDF with balanced $\le 2$-line GO term wrapping). |
-| **`universal_moult_toolkit_synthesis.R`** | **Figure S4** | Conserved Candidate Gene Atlas detailing longitudinal trajectories of high-impact candidate orthologs across species and phases. |
+#### Main Figures
+
+| Modular Script | Manuscript Figure | Generated Artifacts | Description |
+| :--- | :--- | :--- | :--- |
+| *Conceptual* | **Figure 1** | *Schema diagram* | Conceptual schema and experimental design across three Oniscidea families (*A. maculatum*, *P. laevis*, *A. officinalis*), 4 moult stages, and 4 body parts. |
+| **`figure2_species_clocks.R`** | **Figure 2** | `Figure_2_Species_Clocks.png` / `.pdf` | Species-specific principal component analysis (PCA) of raw tissue expression establishing the continuous transcriptomic clocks. |
+| **`figure3_asymmetry_surge.R`** | **Figure 3** | `Figure_3_Asymmetry_Surge.png` / `.pdf`, `Conserved_Asymmetry_Polarity_List.csv` (**Table S1**) | Quantitative appendicular asymmetry demonstrating the ~34-fold surge in differentially expressed genes (DEGs) between anterior and posterior limbs during Intramoult. |
+| **`figure4_universal_pca.R`** | **Figure 4** | `Figure_4_Universal_PCA.png` / `.pdf`, `Global_Drivers_ComBat_Corrected.csv` (**Table S2**) | Cross-species combined PCA after ComBat-seq batch correction demonstrating the universal phase engine and conserved anatomical decoupling (color = phase, shape = body part). |
+| **`figure5_coexpression_modules.R`** | **Figure 5** | `Figure_5_Coexpression_Modules.png` / `.pdf` | Conserved co-expression modules (top 100 high-variance OGs) partitioned across moult phases, resolving 8 synchronized functional modules. |
+| **`figure6_functional_asymmetry_bp.R`** | **Figure 6** | `Figure_6_Functional_Asymmetry_BP.png` / `.pdf`, `Asymmetry_Consensus_All_Phases_BP.csv` (**Table S6**) | Locomotory functional asymmetry waves (Hind Legs vs Front Legs Biological Process) contrasting posterior and anterior limbs across all phases ($38 \times 70\text{ in}$ canvas, $\le 2$-line GO term wrapping). |
+
+#### Supplementary Figures & Tables
+
+| Modular Script | Supplementary Figure / Table | Generated Artifacts | Description |
+| :--- | :--- | :--- | :--- |
+| **`figureS1_S2_S3_biclustering_suite.R`** | **Figure S1**<br>**Figure S2**<br>**Figure S3**<br>**Table S3**<br>**Table S4** | `Figure_S1_Biclustering_100genes_phase.png` / `.pdf`<br>`Figure_S2_Biclustering_2000genes_unsupervised.png` / `.pdf`<br>`Figure_S3_Biclustering_2000genes_phase.png` / `.pdf`<br>`Clusters_100genes_unsupervised.csv`<br>`Clusters_2000genes_unsupervised.csv` | Full biclustering suite across 100 and 2,000 high-variance OGs, evaluating unsupervised vs phase-structured clustering across all species and body parts. |
+| **`figureS4_venn_diagram.R`** | **Figure S4**<br>**Table S5** | `Figure_S4_Venn_Core.png` / `.pdf`<br>`conserved_core_master_all_phases.csv` | 3-way Venn diagram identifying the conserved ancestral core toolkit across Premoult, Intramoult, and Postmoult transitions relative to Intermoult baseline. |
+| **`figureS5_extended_functional_waves.R`** | **Figure S5**<br>(S5A, S5B, S5C)<br>**Table S7**<br>**Table S8**<br>**Table S9** | `Figure_S5A_Asymmetry_MF.png` / `.pdf`<br>`Figure_S5B_Head_vs_FLegs_BP.png` / `.pdf`<br>`Figure_S5C_Head_vs_FLegs_MF.png` / `.pdf`<br>`Asymmetry_Consensus_All_Phases_MF.csv`<br>`Head_vs_FLegs_Consensus_BP.csv`<br>`Head_vs_FLegs_Consensus_MF.csv` | Extended functional waves covering appendicular Molecular Function (S5A: HLegs vs FLegs MF) and cephalic neuroendocrine stability across all moult phases (S5B: Head vs FLegs BP; S5C: Head vs FLegs MF). |
+| **`figureS6_candidate_atlas.R`** | **Figure S6**<br>**Table S10** | `Figure_S6_Candidate_Gene_Atlas.png` / `.pdf`<br>`Universal_Moult_Toolkit_Candidates.csv` | Conserved 20-Gene Candidate Atlas detailing longitudinal trajectories of high-impact candidate orthologs across species and phases, backed by the comprehensive candidate toolkit table. |
+
+*(Note: Legacy scripts `PCA.R`, `combined_species_pca.R`, `biphasic_intramoult_analysis.R`, `biclustering_analysis.R`, `hlegs_vs_flegs_analysis.R`, `head_vs_flegs_analysis.R`, and `cross_species_core.R` remain preserved in `downstream_analysis/` for backward compatibility).*
 
 ---
 
@@ -99,8 +118,8 @@ Standardized, parameterized pipeline scripts taking the project directory path a
 ### 3. Downstream Manuscript Visualizations (`downstream_analysis/`)
 - All scripts in `downstream_analysis/` automatically resolve `PROJECT_ROOT` via `config.R` and `utils.R` without hardcoded system paths.
 - Cross-species counts are batch-corrected using ComBat-seq and VST-transformed.
-- `combined_species_pca.R` (**Figure 4**) generates multi-factor PCA projections colored by moult phase and differentiated by body part/tissue shape.
-- `hlegs_vs_flegs_analysis.R` and `head_vs_flegs_analysis.R` (**Figure 6** / **Figure S3**) render publication-grade vector graphics (`.pdf`, $38 \times 70$ in) implementing balanced word wrapping (`format_go_term`, $\le 2$ lines per term), domain faceting, and collision-free typography.
+- Each manuscript figure has a dedicated modular script (`figure2_...`, `figure3_...`, etc.) that can be run independently to reproduce that figure and export its statistics.
+- Vector graphics (`.pdf`, $38 \times 70$ in for GO waves) implement balanced word wrapping (`format_go_term`, $\le 2$ lines per term), domain faceting, and collision-free typography.
 
 ---
 
