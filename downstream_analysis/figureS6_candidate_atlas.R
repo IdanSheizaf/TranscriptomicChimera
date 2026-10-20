@@ -25,9 +25,10 @@ log_header("Figure S6: Candidate Gene Atlas (Supplementary)")
 out_dir <- get_output_path("Supplementary_Figures")
 if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
 
-# --- 1. LOAD CANDIDATE LIST (Table S10 Source) ---
+# --- 1. LOAD OR SYNTHESIZE CANDIDATE LIST (Table S10 Source) ---
 candidate_candidates <- c(
   file.path(get_output_path(), "Universal_Moult_Toolkit_Candidates.csv"),
+  file.path(get_output_path("Supplementary_Figures"), "Universal_Moult_Toolkit_Candidates.csv"),
   file.path(get_project_root(), "local_scripts", "output_csv", "Universal_Moult_Toolkit_Candidates.csv"),
   file.path(dirname(get_project_root()), "local_scripts", "output_csv", "Universal_Moult_Toolkit_Candidates.csv"),
   file.path(get_project_root(), "figures_final", "Supplementary", "Table S10 Universal_Moult_Toolkit_Candidates.csv"),
@@ -35,8 +36,48 @@ candidate_candidates <- c(
 )
 candidate_path <- candidate_candidates[file.exists(candidate_candidates)][1]
 
-if (is.na(candidate_path) || !file.exists(candidate_path)) {
-  stop("Universal_Moult_Toolkit_Candidates.csv not found! Please run universal_moult_toolkit_synthesis.R first.")
+if (!is.na(candidate_path) && file.exists(candidate_path)) {
+  candidates_df <- read_csv(candidate_path, show_col_types = FALSE)
+} else {
+  cat("Universal_Moult_Toolkit_Candidates.csv not found. Synthesizing from Table S2 (Drivers) and Table S5 (Venn Core)...\n")
+  drivers_cand <- c(
+    file.path(get_output_path("PCA", "Combined"), "Global_Drivers_ComBat_Corrected.csv"),
+    file.path(get_output_path(), "Global_Drivers_ComBat_Corrected.csv"),
+    file.path(get_project_root(), "local_scripts", "output_csv", "Global_Drivers_ComBat_Corrected.csv")
+  )
+  d_path <- drivers_cand[file.exists(drivers_cand)][1]
+  
+  core_cand <- c(
+    file.path(get_output_path("Core_Venn"), "conserved_core_master_all_phases.csv"),
+    file.path(get_output_path(), "conserved_core_master_all_phases.csv"),
+    file.path(get_project_root(), "local_scripts", "output_csv", "conserved_core_master_all_phases.csv")
+  )
+  c_path <- core_cand[file.exists(core_cand)][1]
+  
+  if (is.na(d_path) || is.na(c_path)) {
+    stop("Cannot synthesize Table S10! Ensure Figure 4 (Table S2) and Figure S4 (Table S5) scripts have run.")
+  }
+  
+  pc_weights <- c("PC1" = 21.1, "PC2" = 16.8)
+  global_drivers <- read_csv(d_path, show_col_types = FALSE) %>%
+    filter(PC %in% names(pc_weights)) %>%
+    mutate(importance_score = abs(Loading) * pc_weights[PC])
+  venn_core <- read_csv(c_path, show_col_types = FALSE)
+  
+  candidates_df <- global_drivers %>%
+    inner_join(venn_core, by = "Preferred_name") %>%
+    filter(!str_detect(Preferred_name, "(?i)uncharacterized|hypothetical")) %>%
+    group_by(Preferred_name) %>%
+    slice_max(importance_score, n = 1, with_ties = FALSE) %>%
+    ungroup() %>%
+    arrange(desc(importance_score)) %>%
+    mutate(Category = case_when(
+      str_detect(Preferred_name, "(?i)Chitin|Cuticle|Calc|Matrix") ~ "Structural/Cuticle",
+      str_detect(Preferred_name, "(?i)Toxin|Antimicrobial|Defensin") ~ "Immunity/Protection",
+      str_detect(Preferred_name, "(?i)Mucin|Ice") ~ "Lubrication/Desiccation",
+      str_detect(Preferred_name, "(?i)Hormone|ECR|MIH|JHAMT") ~ "Regulation/Endocrine",
+      TRUE ~ "Other/Metabolic"
+    ))
 }
 
 
@@ -177,8 +218,7 @@ cat("\nSUCCESS: Figure S6 generated and saved to:\n")
 cat("  -", fig_s6_pdf, "\n")
 cat("  -", fig_s6_png, "\n")
 
-# --- 4. EXPORT TABLE S10: CANDIDATE TOOLKIT TABLE ---
-candidates_df <- read_csv(candidate_path, show_col_types = FALSE)
+# --- 5. EXPORT TABLE S10: CANDIDATE TOOLKIT TABLE ---
 table_s10_out <- file.path(out_dir, "Universal_Moult_Toolkit_Candidates.csv")
 write_csv(candidates_df, table_s10_out)
 
