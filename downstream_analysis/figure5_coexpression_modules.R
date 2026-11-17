@@ -87,13 +87,13 @@ mat_scaled <- t(scale(t(mat)))
 
 # --- 3. COMPLEXHEATMAP VISUALIZATION ---
 ha_col_base <- HeatmapAnnotation(
-  Phase = combined_meta$phase,
+  Phase = factor(moult_phase_labels[as.character(combined_meta$phase)], levels = moult_phase_labels),
   Species = species_full_names[combined_meta$species],
-  `Body Part` = combined_meta$tissue,
+  `Body Part` = factor(body_part_labels[combined_meta$tissue], levels = body_part_labels),
   col = list(
-    Phase = moult_colors,
+    Phase = setNames(moult_colors, moult_phase_labels[names(moult_colors)]),
     Species = c("A. maculatum" = "#E41A1C", "P. laevis" = "#377EB8", "A. officinalis" = "#4DAF4A"),
-    `Body Part` = c("f.legs" = "#F781BF", "h.legs" = "#FF7F00", "head" = "#A65628", "thorax" = "#999999")
+    `Body Part` = c("Anterior Limbs" = "#F781BF", "Posterior Limbs" = "#FF7F00", "Head" = "#A65628", "Sternites" = "#999999")
   ),
   annotation_name_side = "left"
 )

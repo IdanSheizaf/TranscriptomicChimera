@@ -118,8 +118,8 @@ plot_df <- data.frame(
 # Panel A: Phase colors + Body part shapes (Manuscript Primary)
 p4a <- ggplot(plot_df, aes(x = PC1, y = PC2, color = phase, shape = tissue)) +
   geom_point(size = 5.5, alpha = 0.85, stroke = 1.3) +
-  scale_color_manual(values = moult_colors, name = "Moult Phase") +
-  scale_shape_manual(values = moult_shapes, name = "Body Part") +
+  scale_color_manual(values = moult_colors, labels = moult_phase_labels, name = "Moult Phase") +
+  scale_shape_manual(values = moult_shapes, labels = body_part_labels, name = "Body Part") +
   labs(
     title = "A: Global Moult Phase Trajectory",
     subtitle = paste0("Top ", actual_n, " OGs | PERMANOVA (Phase): R² = ", r2_val, ", p = ", p_val),
@@ -135,14 +135,14 @@ p4a <- ggplot(plot_df, aes(x = PC1, y = PC2, color = phase, shape = tissue)) +
 
 # Panel B: Body part colors + Species shapes
 tissue_colors <- c("f.legs" = "#377EB8", "h.legs" = "#4DAF4A", "head" = "#984EA3", "thorax" = "#FF7F00")
-tissue_labels <- c("f.legs" = "Front Legs", "h.legs" = "Hind Legs", "head" = "Head", "thorax" = "Pereon")
+tissue_labels <- c("f.legs" = "Anterior Limbs", "h.legs" = "Posterior Limbs", "head" = "Head", "thorax" = "Sternites")
 
 p4b <- ggplot(plot_df, aes(x = PC1, y = PC2, color = tissue, shape = species)) +
   geom_point(size = 5.5, alpha = 0.85, stroke = 1.3) +
   scale_color_manual(values = tissue_colors, labels = tissue_labels, name = "Body Part") +
   labs(
     title = "B: Anatomical Partitioning",
-    subtitle = "Hind legs (green) decouple during intramoult, projecting into postmoult",
+    subtitle = "Posterior limbs decouple during intramoult, projecting into postmoult",
     x = paste0("PC1: ", pca_var[1], "% variance"),
     y = paste0("PC2: ", pca_var[2], "% variance"),
     shape = "Species"

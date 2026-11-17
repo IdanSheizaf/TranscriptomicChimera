@@ -221,12 +221,28 @@ moult_colors <- c(
   "postmoult"  = "#FDE725"
 )
 
+# Standard Phase Labels (Capitalized for publication)
+moult_phase_labels <- c(
+  "intermoult" = "Intermoult",
+  "premoult"   = "Premoult",
+  "intramoult" = "Intramoult",
+  "postmoult"  = "Postmoult"
+)
+
 # Standard Tissue Shapes
 moult_shapes <- c(
   "f.legs" = 16, # Closed circle
   "h.legs" = 17, # Closed triangle
   "head"   = 15, # Closed square
   "thorax" = 18   # Diamond
+)
+
+# Standard Body Part Labels (Publication Nomenclature)
+body_part_labels <- c(
+  "f.legs" = "Anterior Limbs",
+  "h.legs" = "Posterior Limbs",
+  "head"   = "Head",
+  "thorax" = "Sternites"
 )
 
 #' Balanced GO Term Formatter for Multi-line Wrapping (<= 2 lines)

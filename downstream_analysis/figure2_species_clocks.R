@@ -94,8 +94,8 @@ for (sp in all_species) {
   
   p_sp <- ggplot(plot_df, aes(x = PCx, y = PCy, color = phase, shape = tissue)) +
     geom_point(size = 5, alpha = 0.85, stroke = 1.2) +
-    scale_color_manual(values = moult_colors, name = "Phase") +
-    scale_shape_manual(values = moult_shapes, name = "Body Part") +
+    scale_color_manual(values = moult_colors, labels = moult_phase_labels, name = "Phase") +
+    scale_shape_manual(values = moult_shapes, labels = body_part_labels, name = "Body Part") +
     labs(
       title = bquote(bolditalic(.(full_name)) ~ bold(": PC" * .(pc_x) ~ "vs PC" * .(pc_y))),
       subtitle = sub_text,

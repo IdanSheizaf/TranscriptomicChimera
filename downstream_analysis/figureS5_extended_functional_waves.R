@@ -103,7 +103,7 @@ render_go_dotplot <- function(consensus_df, title_text, subtitle_text, out_pdf_p
     scale_size_continuous(range = c(9, 30), name = "Max Gene Count") +
     scale_color_viridis_c(option = "plasma", name = "-log10(avg p.adjust)") +
     scale_shape_manual(values = c("Universal (3-way)" = 17, "Conserved (2-way)" = 16)) +
-    scale_x_discrete(drop = FALSE) + 
+    scale_x_discrete(drop = FALSE, labels = moult_phase_labels) + 
     facet_grid(Domain ~ ., scales = "free_y", space = "free_y") +
     theme_bw(base_size = 40) +
     theme(
@@ -161,8 +161,8 @@ for (gt in c("bp", "mf")) {
     pdf_file <- file.path(out_dir, paste0("Figure_S5", sub_letter, "_Head_vs_FLegs_", toupper(gt), ".pdf"))
     render_go_dotplot(
       consensus, 
-      paste0("Figure S5", sub_letter, ": Head vs Front Legs (", toupper(gt), ")"),
-      "Conserved functional signatures enriched in the Head across the moult cycle",
+      paste0("Figure S5", sub_letter, ": Head vs Anterior Limbs (", toupper(gt), ")"),
+      "Conserved functional signatures enriched in the Head relative to Anterior Limbs across the moult cycle",
       pdf_file
     )
   }
@@ -197,8 +197,8 @@ if (length(results_list_hl_mf) > 0) {
   pdf_file <- file.path(out_dir, "Figure_S5A_HLegs_vs_FLegs_MF.pdf")
   render_go_dotplot(
     consensus_hl_mf,
-    "Figure S5A: Locomotory Asymmetry Waves - Hind Legs vs Front Legs (MF)",
-    "Conserved molecular functions enriched in Hind Legs across the moult cycle",
+    "Figure S5A: Locomotory Asymmetry Waves - Posterior Limbs vs Anterior Limbs (MF)",
+    "Conserved molecular functions enriched in Posterior Limbs relative to Anterior Limbs across the moult cycle",
     pdf_file
   )
 }

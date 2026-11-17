@@ -134,7 +134,7 @@ p <- ggplot(top_plot_data, aes(x = phase, y = reorder(format_go_term(Description
   scale_size_continuous(range = c(9, 30), name = "Max Gene Count") +
   scale_color_viridis_c(option = "plasma", name = "-log10(avg p.adjust)") +
   scale_shape_manual(values = c("Universal (3-way)" = 17, "Conserved (2-way)" = 16)) +
-  scale_x_discrete(drop = FALSE) + 
+  scale_x_discrete(drop = FALSE, labels = moult_phase_labels) + 
   facet_grid(Domain ~ ., scales = "free_y", space = "free_y") +
   theme_bw(base_size = 40) +
   theme(
@@ -156,7 +156,7 @@ p <- ggplot(top_plot_data, aes(x = phase, y = reorder(format_go_term(Description
   guides(shape = guide_legend(override.aes = list(size = 20))) +
   labs(
     title = "Figure 6: Locomotory Functional Asymmetry Waves (Biological Process)", 
-    subtitle = "Conserved terms enriched in Hind Legs relative to Front Legs across moult phases", 
+    subtitle = "Conserved terms enriched in Posterior Limbs relative to Anterior Limbs across moult phases", 
     x = "Moult Phase", y = NULL, shape = "Conservation"
   )
 
