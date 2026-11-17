@@ -44,7 +44,7 @@ This study deciphers the conserved gene expression programs orchestrating this b
 | Feature | Description |
 | :--- | :--- |
 | **Model Species** | *Armadillidium maculatum*, *Porcellio laevis*, *Armadillo officinalis* |
-| **Anatomical Tissues** | Front Legs (`f.legs`), Hind Legs (`h.legs`), Head (`head`), Thorax (`thorax`) |
+| **Anatomical Tissues** | Anterior Limbs (`f.legs`), Posterior Limbs (`h.legs`), Head (`head`), Sternites (`thorax`) |
 | **Physiological Phases** | `intermoult`, `premoult`, `intramoult`, `postmoult` |
 | **Sequencing** | Illumina NovaSeq 6000 Paired-End RNA-seq |
 | **Assembly Strategy** | *De novo* Trinity assembly per species + MMseqs2 taxonomic decontamination |
@@ -109,7 +109,7 @@ Each downstream script is strictly coupled with its corresponding publication fi
 | **`figure3_asymmetry_surge.R`** | **Figure 3** | `Figure_3_Asymmetry_Surge.png` / `.pdf`<br>• **Table S1**: `Conserved_Asymmetry_Polarity_List.csv` | A 33.6-fold surge in front-vs-hind limb DEGs during intramoult ($p = 0.009$). |
 | **`figure4_universal_pca.R`** | **Figure 4** | `Figure_4_Universal_PCA.png` / `.pdf`<br>• **Table S2**: `Global_Drivers_ComBat_Corrected.csv` | Cross-species aligned PCA on 2,000 OGs via ComBat-seq, highlighting universal phase progression and posterior limb decoupling. |
 | **`figure5_coexpression_modules.R`** | **Figure 5** | `Figure_5_Coexpression_Modules.png` / `.pdf`<br>• **Table S3**: `Clusters_100genes_unsupervised.csv` | Unsupervised biclustering across top 100 variable OGs showing sample grouping driven by moult phase over phylogenetic origin. |
-| **`figure6_functional_asymmetry_bp.R`** | **Figure 6** | `Figure_6_Functional_Asymmetry_BP.png` / `.pdf`<br>• **Table S6**: `Asymmetry_Consensus_All_Phases_BP.csv` | Locomotory GO Biological Process waves (Hind Legs vs Front Legs) showing posterior ion transport/proteolysis vs anterior cuticle digestion. |
+| **`figure6_functional_asymmetry_bp.R`** | **Figure 6** | `Figure_6_Functional_Asymmetry_BP.png` / `.pdf`<br>• **Table S6**: `Asymmetry_Consensus_All_Phases_BP.csv` | Locomotory GO Biological Process waves (Posterior Limbs vs Anterior Limbs) showing posterior ion transport/proteolysis vs anterior cuticle digestion. |
 
 ### Supplementary Figures & Tables
 
@@ -117,7 +117,7 @@ Each downstream script is strictly coupled with its corresponding publication fi
 | :--- | :---: | :--- | :--- |
 | **`figureS1_S2_S3_biclustering_suite.R`** | **Figure S1**<br>**Figure S2**<br>**Figure S3** | `Figure_S1_Biclustering_100genes_phase.png` / `.pdf`<br>`Figure_S2_Biclustering_2000genes_unsupervised.png` / `.pdf`<br>`Figure_S3_Biclustering_2000genes_phase.png` / `.pdf`<br>• **Table S3**: `Clusters_100genes_unsupervised.csv`<br>• **Table S4**: `Clusters_2000genes_unsupervised.csv` | Complete biclustering suite: phase-partitioned 100-OG heatmap (Fig S1, 8 chronological modules), unsupervised 2,000-OG biclustering (Fig S2), and phase-partitioned 2,000-OG heatmap (Fig S3). |
 | **`figureS4_venn_diagram.R`** | **Figure S4** | `Figure_S4_Venn_Core.png` / `.pdf`<br>• **Table S5**: `conserved_core_master_all_phases.csv` | 3-way Venn intersection identifying the core ancestral toolkit across Premoult, Intramoult, and Postmoult transitions relative to Intermoult baseline. |
-| **`figureS5_extended_functional_waves.R`** | **Figure S5**<br>(S5A, S5B, S5C) | `Figure_S5A_Asymmetry_MF.png` / `.pdf`<br>`Figure_S5B_Head_vs_FLegs_BP.png` / `.pdf`<br>`Figure_S5C_Head_vs_FLegs_MF.png` / `.pdf`<br>• **Table S7**: `Asymmetry_Consensus_All_Phases_MF.csv`<br>• **Table S8**: `Head_vs_FLegs_Consensus_BP.csv`<br>• **Table S9**: `Head_vs_FLegs_Consensus_MF.csv` | Extended GO waves: appendicular Molecular Function (S5A: HLegs vs FLegs MF; calcium binding) and cephalic neuroendocrine stability across all moult phases (S5B: Head vs FLegs BP; S5C: Head vs FLegs MF). |
+| **`figureS5_extended_functional_waves.R`** | **Figure S5**<br>(S5A, S5B, S5C) | `Figure_S5A_Asymmetry_MF.png` / `.pdf`<br>`Figure_S5B_Head_vs_FLegs_BP.png` / `.pdf`<br>`Figure_S5C_Head_vs_FLegs_MF.png` / `.pdf`<br>• **Table S7**: `Asymmetry_Consensus_All_Phases_MF.csv`<br>• **Table S8**: `Head_vs_FLegs_Consensus_BP.csv`<br>• **Table S9**: `Head_vs_FLegs_Consensus_MF.csv` | Extended GO waves: appendicular Molecular Function (S5A: Posterior Limbs vs Anterior Limbs MF; calcium binding) and cephalic neuroendocrine stability across all moult phases (S5B: Head vs Anterior Limbs BP; S5C: Head vs Anterior Limbs MF). |
 | **`figureS6_candidate_atlas.R`** | **Figure S6** | `Figure_S6_Candidate_Gene_Atlas.png` / `.pdf`<br>• **Table S10**: `Universal_Moult_Toolkit_Candidates.csv` | Conserved 20-Gene Candidate Atlas detailing longitudinal profiles of top structural, protective, and terrestrial homeostasis orthologs across species and phases. |
 
 ---
@@ -213,10 +213,10 @@ Rscript downstream_analysis/figureS6_candidate_atlas.R
 ```r
 # Bioconductor
 install.packages("BiocManager")
-BiocManager::install(c("DESeq2", "sva", "clusterProfiler", "ComplexHeatmap", "GO.db", "AnnotationDbi"))
+BiocManager::install(c("DESeq2", "sva", "clusterProfiler", "enrichplot", "ComplexHeatmap", "GO.db", "AnnotationDbi"))
 
 # CRAN
-install.packages(c("tidyverse", "patchwork", "circlize", "RColorBrewer", "matrixStats"))
+install.packages(c("tidyverse", "patchwork", "vegan", "ggrepel", "circlize", "RColorBrewer", "matrixStats"))
 ```
 
 ---
